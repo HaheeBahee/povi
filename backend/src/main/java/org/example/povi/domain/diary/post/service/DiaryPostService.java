@@ -8,10 +8,10 @@ import org.example.povi.domain.diary.post.dto.request.DiaryPostCreateReq;
 import org.example.povi.domain.diary.post.dto.request.DiaryPostUpdateReq;
 import org.example.povi.domain.diary.post.dto.response.*;
 import org.example.povi.domain.diary.post.entity.DiaryPost;
-import org.example.povi.domain.diary.post.mapper.DiaryCardAssembler;
+import org.example.povi.domain.diary.post.assembler.DiaryCardAssembler;
+import org.example.povi.domain.diary.post.assembler.MyDiaryAssembler;
 import org.example.povi.domain.diary.post.mapper.DiaryQueryMapper;
 import org.example.povi.domain.diary.post.mapper.DiaryRequestMapper;
-import org.example.povi.domain.diary.post.mapper.MyDiaryAssembler;
 import org.example.povi.domain.diary.post.policy.DiaryPostAccessPolicy;
 import org.example.povi.domain.diary.post.repository.DiaryPostRepository;
 import org.example.povi.domain.user.entity.User;
@@ -137,25 +137,15 @@ public class DiaryPostService {
         requireLogin(currentUserId);
 
         Set<Long> followingIds = followService.getFollowingUserIds(currentUserId);
+        if (followingIds.isEmpty()) return Page.empty(pageable);
+
         Set<Long> mutualIds = followService.getMutualUserIds(currentUserId);
-        Set<Long> oneWayIds = new HashSet<>(followingIds);
-        oneWayIds.removeAll(mutualIds);
 
-        boolean hasMutual = !mutualIds.isEmpty();
-        boolean hasOneWay = !oneWayIds.isEmpty();
-
-        Collection<Long> mutualParam = hasMutual ? mutualIds : List.of(-1L);
-        Collection<Long> oneWayParam = hasOneWay ? oneWayIds : List.of(-1L);
-
-        Page<DiaryPost> page = diaryPostRepository.findFriendFeedPaged(
-                mutualParam,
-                List.of(Visibility.FRIEND, Visibility.PUBLIC),
-                oneWayParam,
-                Visibility.PUBLIC,
-                hasMutual,
-                hasOneWay,
-                pageable
-        );
+        Page<DiaryPost> page = mutualIds.isEmpty()
+                ? diaryPostRepository.findFriendFeedPublicOnlyPaged(
+                        followingIds, Visibility.PUBLIC, pageable)
+                : diaryPostRepository.findFriendFeedWithMutualPaged(
+                        followingIds, Visibility.PUBLIC, mutualIds, Visibility.FRIEND, pageable);
 
         if (page.isEmpty()) return Page.empty(pageable);
 
@@ -189,7 +179,7 @@ public class DiaryPostService {
         Page<DiaryPost> page = mutualIds.isEmpty()
                 ? diaryPostRepository.findExploreFeedPublicOnlyInPeriodPaged(
                 currentUserId, Visibility.PUBLIC, startAt, endAt, pageable)
-                : diaryPostRepository.findExploreFeedWithMutualsInPeriodPaged(
+                : diaryPostRepository.findExploreFeedWithMutualInPeriodPaged(
                 currentUserId, mutualIds,
                 List.of(Visibility.FRIEND, Visibility.PUBLIC),
                 Visibility.PUBLIC, startAt, endAt, pageable);

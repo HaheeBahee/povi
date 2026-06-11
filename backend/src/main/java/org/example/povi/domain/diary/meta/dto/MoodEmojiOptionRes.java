@@ -1,4 +1,4 @@
-package org.example.povi.domain.diary.enums.dto;
+package org.example.povi.domain.diary.meta.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

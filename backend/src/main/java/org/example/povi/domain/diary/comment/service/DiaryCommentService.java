@@ -61,7 +61,8 @@ public class DiaryCommentService {
 
     /**
      * 댓글 목록 조회
-     * - 비로그인 허용(공개글 조건은 Policy에서 처리)
+     * - 로그인 필수
+     * - 대상 포스트 읽기 권한 필요
      */
     @Transactional(readOnly = true)
     public PagedResponse<DiaryCommentRes> getCommentsByPost(Long postId,
@@ -154,12 +155,4 @@ public class DiaryCommentService {
         }
     }
 
-    /** 댓글 존재 + 특정 포스트에 속하는지 매칭 검증 */
-    private DiaryComment getCommentOr404(Long commentId, Long postId) {
-        return diaryCommentRepository.findByIdAndPostId(commentId, postId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "해당 댓글이 존재하지 않거나 게시글과 매칭되지 않습니다."
-                ));
-    }
 }

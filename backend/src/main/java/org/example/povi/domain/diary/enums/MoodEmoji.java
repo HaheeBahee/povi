@@ -29,7 +29,7 @@ public enum MoodEmoji {
         return valence;
     }
 
-    //평균 점수와 가장 가까운 감정 반환
+    // 평균 valence와 가장 가까운 감정 반환
     public static MoodEmoji fromValence(double averageScore) {
         double clampedScore = Math.max(-10, Math.min(10, averageScore));
         MoodEmoji mostSimilarEmotion = NEUTRAL;

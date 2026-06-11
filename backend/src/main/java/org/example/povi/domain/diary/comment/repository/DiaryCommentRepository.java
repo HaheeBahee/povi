@@ -14,9 +14,6 @@ import java.util.Optional;
 public interface DiaryCommentRepository extends JpaRepository<DiaryComment, Long> {
     void deleteAllByAuthor(User user);
 
-    /**
-     * 댓글 ID와 게시글 ID로 특정 댓글 조회
-     */
     Optional<DiaryComment> findByIdAndPostId(Long commentId, Long postId);
 
     Page<DiaryComment> findByPostId(Long postId, Pageable pageable);
@@ -25,7 +22,7 @@ public interface DiaryCommentRepository extends JpaRepository<DiaryComment, Long
     @Query("select c.post.id, count(c) from DiaryComment c where c.post.id in :postIds group by c.post.id")
     List<Object[]> countByPostIds(@Param("postIds") List<Long> postIds);
 
-    //특정 게시글의 댓글 개수
+    // 특정 게시글의 댓글 수 (단건 상세 조회용)
     long countByPostId(Long postId);
 }
 

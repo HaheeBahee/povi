@@ -27,13 +27,9 @@ public class DiaryPostAccessPolicy {
             return true;
         }
 
-        // 가시성 규칙에 따른 접근 허용
         return isVisibleToUser(currentUserId, authorId, visibility);
     }
 
-    /**
-     * 가시성 규칙에 따른 접근 가능 여부를 판단합니다.
-     */
     private boolean isVisibleToUser(Long userId, Long authorId, Visibility visibility) {
         return switch (visibility) {
             case PUBLIC -> true;

@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.povi.auth.token.jwt.CustomJwtUser;
 import org.example.povi.domain.diary.post.dto.request.DiaryPostCreateReq;
 import org.example.povi.domain.diary.post.dto.request.DiaryPostUpdateReq;
 import org.example.povi.domain.diary.post.dto.response.*;
@@ -91,7 +90,7 @@ public class DiaryPostController {
             @ApiResponse(responseCode = "403", description = "조회 권한 없음"),
             @ApiResponse(responseCode = "404", description = "일기를 찾을 수 없음")
     })
-    public ResponseEntity<DiaryDetailRes> getMyDiaryPostDetail(
+    public ResponseEntity<DiaryDetailRes> getDiaryPostDetail(
             @AuthenticationPrincipal(expression = "id") Long userId,
             @PathVariable Long postId
     ) {
@@ -110,9 +109,9 @@ public class DiaryPostController {
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month,
             @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-            @AuthenticationPrincipal CustomJwtUser user
+            @AuthenticationPrincipal(expression = "id") Long userId
     ) {
-        MyDiaryListRes res = diaryPostService.getMyDiaryPostsWithMonthlyFilter(year, month, pageable, user.getId());
+        MyDiaryListRes res = diaryPostService.getMyDiaryPostsWithMonthlyFilter(year, month, pageable, userId);
         return ResponseEntity.ok(res);
     }
 

@@ -38,26 +38,32 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
 
     // =========================================================
     // 친구 피드 (페이징)
-    //  - 맞팔: FRIEND + PUBLIC
-    //  - 단방향: PUBLIC
-    //  - hasMutual / hasOneWay 플래그로 조건 단순화 (빈 컬렉션 처리 회피)
+    //  - 맞팔 없음: 팔로잉 전체 PUBLIC만
+    //  - 맞팔 있음: 팔로잉 전체 PUBLIC + 맞팔 FRIEND
     // =========================================================
     @Query("""
-    select p
-    from DiaryPost p
-    where (
-            (:hasMutual = true and p.user.id in :mutualIds and p.visibility in :friendVisible)
-         or (:hasOneWay = true and p.user.id in :oneWayIds and p.visibility = :publicVis)
-    )
+    select p from DiaryPost p
+    where p.user.id in :followingIds
+      and p.visibility = :publicVis
     order by p.createdAt desc
     """)
-    Page<DiaryPost> findFriendFeedPaged(
-            @Param("mutualIds") Collection<Long> mutualIds,
-            @Param("friendVisible") Collection<Visibility> friendVisible,
-            @Param("oneWayIds") Collection<Long> oneWayIds,
+    Page<DiaryPost> findFriendFeedPublicOnlyPaged(
+            @Param("followingIds") Collection<Long> followingIds,
             @Param("publicVis") Visibility publicVis,
-            @Param("hasMutual") boolean hasMutual,
-            @Param("hasOneWay") boolean hasOneWay,
+            Pageable pageable
+    );
+
+    @Query("""
+    select p from DiaryPost p
+    where (p.user.id in :followingIds and p.visibility = :publicVis)
+       or (p.user.id in :mutualIds    and p.visibility = :friendVis)
+    order by p.createdAt desc
+    """)
+    Page<DiaryPost> findFriendFeedWithMutualPaged(
+            @Param("followingIds") Collection<Long> followingIds,
+            @Param("publicVis") Visibility publicVis,
+            @Param("mutualIds") Collection<Long> mutualIds,
+            @Param("friendVis") Visibility friendVis,
             Pageable pageable
     );
 
@@ -79,7 +85,7 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
           )
         order by p.createdAt desc
         """)
-    Page<DiaryPost> findExploreFeedWithMutualsInPeriodPaged(
+    Page<DiaryPost> findExploreFeedWithMutualInPeriodPaged(
             @Param("viewerId") Long viewerId,
             @Param("mutualIds") Collection<Long> mutualIds,
             @Param("friendVisible") Collection<Visibility> friendVisible,

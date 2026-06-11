@@ -6,8 +6,8 @@ import org.example.povi.domain.diary.like.entity.DiaryPostLike;
 import org.example.povi.domain.diary.like.repository.DiaryPostLikeRepository;
 import org.example.povi.domain.diary.post.entity.DiaryPost;
 import org.example.povi.domain.diary.post.repository.DiaryPostRepository;
+import org.example.povi.domain.diary.post.policy.DiaryPostAccessPolicy;
 import org.example.povi.domain.user.entity.User;
-import org.example.povi.domain.user.follow.service.FollowService;
 import org.example.povi.domain.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class DiaryPostLikeService {
     private final DiaryPostLikeRepository diaryPostLikeRepository;
     private final DiaryPostRepository diaryPostRepository;
     private final UserRepository userRepository;
-    private final FollowService followService;
+    private final DiaryPostAccessPolicy postAccessPolicy;
 
     /**
      * 좋아요 토글: 결과 DTO 반환 (liked=true: 추가, false: 취소)
@@ -88,18 +88,8 @@ public class DiaryPostLikeService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다."));
     }
 
-    /**
-     * 댓글 서비스와 동일한 접근 권한 로직
-     * - 본인 글: 허용
-     * - PUBLIC: 허용
-     * - FRIEND: 맞팔만 허용
-     * - PRIVATE: 불허
-     */
     private boolean canAccessPost(Long viewerId, DiaryPost post) {
-        Long ownerId = post.getUser().getId();
-        if (viewerId.equals(ownerId)) return true;
-
-        return post.getVisibility().canAccess(viewerId, ownerId, followService);
+        return postAccessPolicy.hasReadPermission(viewerId, post);
     }
 }
 
