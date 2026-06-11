@@ -21,14 +21,14 @@ public record DiaryCommentRes(
      * Entity → DTO (단건 변환)
      */
     public static DiaryCommentRes from(DiaryComment comment, Long currentUserId) {
-        Long aid = comment.getAuthor().getId();
+        Long authorId = comment.getAuthor().getId();
         return new DiaryCommentRes(
                 comment.getId(),
-                aid,
-                comment.getAuthor().getNickname(),  // 필드명에 맞게
+                authorId,
+                comment.getAuthor().getNickname(),
                 comment.getContent(),
                 comment.getCreatedAt(),
-                Objects.equals(aid, currentUserId)       // null-safe 비교
+                Objects.equals(authorId, currentUserId)  // null-safe 비교
         );
     }
 

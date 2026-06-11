@@ -11,6 +11,7 @@ import java.util.List;
 
 @Schema(description = "다이어리 게시글 작성 응답 DTO")
 public record DiaryPostCreateRes(
+        Long postId,
         String title,
         String content,
         MoodEmoji moodEmoji,
@@ -20,6 +21,7 @@ public record DiaryPostCreateRes(
 ) {
     public static DiaryPostCreateRes from(DiaryPost post) {
         return new DiaryPostCreateRes(
+                post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getMoodEmoji(),
