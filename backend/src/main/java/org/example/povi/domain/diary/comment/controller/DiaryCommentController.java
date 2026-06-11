@@ -4,7 +4,6 @@ package org.example.povi.domain.diary.comment.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.povi.auth.token.jwt.CustomJwtUser;
 import org.example.povi.domain.diary.comment.dto.request.DiaryCommentCreateReq;
 import org.example.povi.domain.diary.comment.dto.request.DiaryCommentUpdateReq;
 import org.example.povi.domain.diary.comment.dto.response.DiaryCommentCreateRes;
@@ -32,9 +31,9 @@ public class DiaryCommentController implements DiaryCommentControllerDocs {
     public ResponseEntity<DiaryCommentCreateRes> createDiaryComment(
             @PathVariable Long postId,
             @RequestBody @Valid DiaryCommentCreateReq createReq,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     ){
-        DiaryCommentCreateRes res = diaryCommentService.createDiaryComment(postId, createReq, currentUser.getId());
+        DiaryCommentCreateRes res = diaryCommentService.createDiaryComment(postId, createReq, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
@@ -43,10 +42,10 @@ public class DiaryCommentController implements DiaryCommentControllerDocs {
     public ResponseEntity<PagedResponse<DiaryCommentRes>> getComments(
             @PathVariable Long postId,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     ) {
-        PagedResponse<DiaryCommentRes>  res = diaryCommentService.getCommentsByPost(
-                postId, pageable, currentUser.getId()
+        PagedResponse<DiaryCommentRes> res = diaryCommentService.getCommentsByPost(
+                postId, pageable, userId
         );
         return ResponseEntity.ok(res);
     }
@@ -57,10 +56,10 @@ public class DiaryCommentController implements DiaryCommentControllerDocs {
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @RequestBody @Valid DiaryCommentUpdateReq updateReq,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     ) {
         DiaryCommentUpdateRes res = diaryCommentService.updateDiaryComment(
-                postId, commentId, updateReq, currentUser.getId()
+                postId, commentId, updateReq, userId
         );
         return ResponseEntity.ok(res);
     }
@@ -70,9 +69,9 @@ public class DiaryCommentController implements DiaryCommentControllerDocs {
     public ResponseEntity<Void> deleteDiaryComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     ){
-        diaryCommentService.deleteDiaryComment(postId, commentId, currentUser.getId());
+        diaryCommentService.deleteDiaryComment(postId, commentId, userId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "diaryPost_likes")
+@Table(name = "diary_post_likes")
 @AttributeOverride(name = "id", column = @Column(name = "post_like_id"))
 public class DiaryPostLike extends BaseEntity {
 

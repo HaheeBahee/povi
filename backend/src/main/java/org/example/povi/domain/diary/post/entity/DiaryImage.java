@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.povi.global.entity.BaseEntity;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor
@@ -19,9 +17,6 @@ public class DiaryImage extends BaseEntity {
 
     @Column(name = "image_url", length = 2048, nullable = false)
     private String imageUrl;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
     public DiaryImage(DiaryPost post, String imageUrl) {
         this.post = post;
