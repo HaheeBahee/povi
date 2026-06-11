@@ -1,11 +1,13 @@
 package org.example.povi.domain.weather.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.povi.domain.weather.OpenWeatherClient;
 import org.example.povi.domain.weather.dto.WeatherResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "13. 날씨 API")
 @RestController
 @RequestMapping("/api/weather")
 @RequiredArgsConstructor

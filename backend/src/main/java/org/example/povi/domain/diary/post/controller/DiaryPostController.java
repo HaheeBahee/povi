@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/diary-posts")
-@Tag(name = "Diary Posts", description = "일기 게시글 API")
+@Tag(name = "02. 다이어리 API ⭐")
 public class DiaryPostController {
 
     private final DiaryPostService diaryPostService;

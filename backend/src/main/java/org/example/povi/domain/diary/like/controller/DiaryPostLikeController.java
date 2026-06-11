@@ -1,6 +1,7 @@
 package org.example.povi.domain.diary.like.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.povi.domain.diary.like.dto.DiaryPostLikeRes;
 import org.example.povi.domain.diary.like.service.DiaryPostLikeService;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "03. 다이어리 좋아요 API ⭐")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/diary-posts/{postId}/likes")

@@ -21,7 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
-@Tag(name = "Diary Comments", description = "일기 댓글 API")
+@Tag(name = "04. 다이어리 댓글 API ⭐")
 @RequestMapping("/diary-posts/{postId}/comments")
 public interface DiaryCommentControllerDocs {
 

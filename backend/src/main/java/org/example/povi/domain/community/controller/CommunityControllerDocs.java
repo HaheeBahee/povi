@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "Community", description = "커뮤니티 API")
+@Tag(name = "07. 커뮤니티 API")
 @RequestMapping("/posts")
 public interface CommunityControllerDocs {
 

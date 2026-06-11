@@ -2,13 +2,13 @@ package org.example.povi.global.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.OAuthFlow;
-import io.swagger.v3.oas.models.security.OAuthFlows;
-import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
@@ -16,8 +16,23 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         Info info = new Info()
-                .title("데브코스 일취월장 2차프로젝트 API")
-                .description("데브코스 일취월장 다이어리 서비스 프로젝트 API 문서")
+                .title("POVI - 감정 공유 다이어리 서비스 API")
+                .description("""
+                        감정 기록과 공유를 중심으로 한 다이어리 서비스의 백엔드 API 문서입니다.
+
+                        ### 🔑 사용 방법 (1분 소요)
+                        1. `인증 API > 회원가입`으로 계정 생성 (이메일/비밀번호/닉네임, provider는 `LOCAL`)
+                        2. `인증 API > 로그인` 실행 후 응답의 `accessToken` 복사
+                        3. 우측 상단 **Authorize** 버튼 클릭 → 토큰 붙여넣기 → 모든 API 사용 가능
+
+                        ### ⭐ 표시는 제가 설계/구현을 담당한 파트입니다
+                        다이어리 도메인 전체 (게시글 CRUD, 공개범위 권한 정책, 댓글, 좋아요, 이미지 업로드, 감정 통계)
+
+                        **주요 구현 포인트**
+                        - 공개범위(PUBLIC / FRIEND / PRIVATE) × 팔로우 관계 기반 접근 제어 정책 분리 (`DiaryPostAccessPolicy`)
+                        - 내 다이어리 목록 조회 시 주간 감정 통계 집계 제공
+                        - 맞팔 여부에 따라 피드 노출 범위가 달라지는 친구/탐색 피드
+                        """)
                 .version("1.0");
 
         SecurityScheme securityScheme = new SecurityScheme()
@@ -27,50 +42,30 @@ public class SwaggerConfig {
                 .in(SecurityScheme.In.HEADER)
                 .name("Authorization");
 
-        // Kakao OAuth2 인증 스킴
-        SecurityScheme oauthScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.OAUTH2)
-                .description("Kakao OAuth2 flow for obtaining access token")
-                .flows(new OAuthFlows()
-                        .authorizationCode(new OAuthFlow()
-                                .authorizationUrl("https://kauth.kakao.com/oauth/authorize")
-                                .tokenUrl("https://kauth.kakao.com/oauth/token")
-                                .scopes(new Scopes()
-                                        .addString("account_email", "이메일 조회 권한")
-                                        .addString("profile_nickname", "프로필 닉네임 조회 권한")
-                                )
-                        )
-                );
-
-        // Google OAuth2 인증 스킴
-        SecurityScheme oauthScheme2 = new SecurityScheme()
-                .type(SecurityScheme.Type.OAUTH2)
-                .description("Google OAuth2 flow for obtaining access token")
-                .flows(new OAuthFlows()
-                        .authorizationCode(new OAuthFlow()
-                                .authorizationUrl("https://accounts.google.com/o/oauth2/v2/auth")
-                                .tokenUrl("https://oauth2.googleapis.com/token")
-                                .scopes(new Scopes()
-                                        .addString("openid", "OpenID Connect scope")
-                                        .addString("email", "Read user's email address")
-                                        .addString("profile", "Read user's basic profile info")
-                                )
-                        )
-                );
-
-
-
-        // 보안 요구사항 설정: JWT 또는 OAuth2
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("BearerAuth")
-                .addList("KakaoOAuth")
-                .addList("GoogleOAuth");
+                .addList("BearerAuth");
+
+        // 태그명의 번호 prefix + springdoc tags-sorter(alpha) 조합으로 표시 순서를 고정한다
+        List<Tag> tags = List.of(
+                new Tag().name("01. 인증 API").description("회원가입, 로그인, 토큰 재발급, 로그아웃 — 먼저 여기서 토큰을 발급받으세요"),
+                new Tag().name("02. 다이어리 API ⭐").description("일기 CRUD + 공개범위/팔로우 기반 접근 제어 + 주간 감정 통계 (담당 파트)"),
+                new Tag().name("03. 다이어리 좋아요 API ⭐").description("일기 좋아요 토글/조회 (담당 파트)"),
+                new Tag().name("04. 다이어리 댓글 API ⭐").description("일기 댓글 CRUD (담당 파트)"),
+                new Tag().name("05. 다이어리 이미지 API ⭐").description("일기 이미지 업로드/삭제 (담당 파트)"),
+                new Tag().name("06. 다이어리 메타 API").description("감정 이모지 옵션 조회"),
+                new Tag().name("07. 커뮤니티 API").description("커뮤니티 글/댓글/좋아요/북마크"),
+                new Tag().name("08. 미션 API").description("오늘의 미션 생성/조회/상태 변경"),
+                new Tag().name("09. 명언 API").description("오늘의 명언 조회"),
+                new Tag().name("10. 명언 필사 API").description("명언 필사 작성/조회/삭제"),
+                new Tag().name("11. 사용자 API").description("마이페이지 조회, 프로필 수정"),
+                new Tag().name("12. 이메일 인증 API").description("이메일 인증 요청/검증"),
+                new Tag().name("13. 날씨 API").description("좌표 기반 현재 날씨 조회")
+        );
 
         return new OpenAPI()
                 .info(info)
+                .tags(tags)
                 .addSecurityItem(securityRequirement)
-                .schemaRequirement("BearerAuth", securityScheme)
-                .schemaRequirement("KakaoOAuth", oauthScheme)
-                .schemaRequirement("GoogleOAuth", oauthScheme2);
+                .schemaRequirement("BearerAuth", securityScheme);
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Tag(name = "Diary Image Upload", description = "일기 이미지 업로드 API")
+@Tag(name = "05. 다이어리 이미지 API ⭐")
 @RequestMapping("/diary-images")
 public interface DiaryImageUploadControllerDocs {
 
