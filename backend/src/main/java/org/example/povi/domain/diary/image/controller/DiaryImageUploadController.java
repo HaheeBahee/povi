@@ -15,9 +15,6 @@ public class DiaryImageUploadController implements DiaryImageUploadControllerDoc
 
     private final DiaryImageUploadService diaryImageUploadService;
 
-    /**
-     * 다이어리 이미지 업로드
-     */
     @PostMapping
     public ResponseEntity<List<String>> uploadDiaryImages(
             @RequestPart("images") List<MultipartFile> images
@@ -26,9 +23,6 @@ public class DiaryImageUploadController implements DiaryImageUploadControllerDoc
         return ResponseEntity.ok(uploadedUrls);
     }
 
-    /**
-     * 다이어리 이미지 삭제
-     */
     @DeleteMapping
     public ResponseEntity<Void> deleteDiaryImage(
             @RequestParam("imageUrl") String imageUrl
