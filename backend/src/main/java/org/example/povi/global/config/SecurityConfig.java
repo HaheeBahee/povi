@@ -3,8 +3,6 @@ package org.example.povi.global.config;
 import lombok.RequiredArgsConstructor;
 import org.example.povi.auth.token.jwt.JwtAuthenticationFilter;
 import org.example.povi.auth.token.jwt.JwtTokenProvider;
-import org.example.povi.auth.service.CustomOAuth2UserService;
-import org.example.povi.auth.handler.OAuth2SuccessHandler;
 import org.example.povi.global.handler.CustomAccessDeniedHandler;
 import org.example.povi.global.handler.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +32,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
@@ -74,10 +70,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/diary-images").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/diary-images").authenticated()
                         .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .successHandler(oAuth2SuccessHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
