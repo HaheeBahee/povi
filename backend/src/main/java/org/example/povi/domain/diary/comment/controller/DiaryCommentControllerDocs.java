@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.example.povi.auth.token.jwt.CustomJwtUser;
 import org.example.povi.domain.diary.comment.dto.request.DiaryCommentCreateReq;
 import org.example.povi.domain.diary.comment.dto.request.DiaryCommentUpdateReq;
 import org.example.povi.domain.diary.comment.dto.response.DiaryCommentCreateRes;
@@ -39,7 +38,7 @@ public interface DiaryCommentControllerDocs {
     ResponseEntity<DiaryCommentCreateRes> createDiaryComment(
             @PathVariable Long postId,
             @RequestBody @Valid DiaryCommentCreateReq createReq,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     );
 
     @GetMapping
@@ -53,7 +52,7 @@ public interface DiaryCommentControllerDocs {
     ResponseEntity<PagedResponse<DiaryCommentRes>> getComments(
             @PathVariable Long postId,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     );
 
     @PatchMapping("/{commentId}")
@@ -70,7 +69,7 @@ public interface DiaryCommentControllerDocs {
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @RequestBody @Valid DiaryCommentUpdateReq updateReq,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     );
 
     @DeleteMapping("/{commentId}")
@@ -84,6 +83,6 @@ public interface DiaryCommentControllerDocs {
     ResponseEntity<Void> deleteDiaryComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @AuthenticationPrincipal CustomJwtUser currentUser
+            @AuthenticationPrincipal(expression = "id") Long userId
     );
 }
