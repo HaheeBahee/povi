@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "미션 API", description = "미션 생성, 조회, 상태 변경, 이력 조회 기능 제공")
+@Tag(name = "08. 미션 API", description = "미션 생성, 조회, 상태 변경, 이력 조회 기능 제공")
 public interface MissionControllerDocs {
 
     @Operation(summary = "오늘의 미션 조회", description = "로그인한 사용자의 오늘 미션 리스트를 조회합니다.")

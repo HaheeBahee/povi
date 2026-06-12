@@ -14,7 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "명언 필사 API", description = "명언에 대한 필사 작성, 삭제, 조회 기능 제공")
+@Tag(name = "10. 명언 필사 API", description = "명언에 대한 필사 작성, 삭제, 조회 기능 제공")
 public interface TranscriptionControllerDocs {
 
     @Operation(summary = "명언 필사 작성", description = "특정 명언에 대한 필사 기록을 생성합니다.",

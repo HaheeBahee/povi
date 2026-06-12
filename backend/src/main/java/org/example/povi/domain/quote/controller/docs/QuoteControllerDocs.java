@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Tag(name = "명언 API", description = "오늘의 명언을 랜덤으로 조회하는 기능 제공")
+@Tag(name = "09. 명언 API", description = "오늘의 명언을 랜덤으로 조회하는 기능 제공")
 public interface QuoteControllerDocs {
 
     @Operation(

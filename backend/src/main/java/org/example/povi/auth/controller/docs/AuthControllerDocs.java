@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "인증 API", description = "회원가입, 로그인, 토큰 재발급, 로그아웃 등 인증 관련 기능 제공")
+@Tag(name = "01. 인증 API", description = "회원가입, 로그인, 토큰 재발급, 로그아웃 등 인증 관련 기능 제공")
 public interface AuthControllerDocs {
 
     @Operation(summary = "회원가입", description = "이메일 기반 회원가입을 수행합니다.")

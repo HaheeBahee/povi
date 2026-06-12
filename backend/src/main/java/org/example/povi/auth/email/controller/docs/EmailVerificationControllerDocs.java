@@ -14,7 +14,7 @@ import org.example.povi.auth.email.dto.EmailVerificationStatusResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "이메일 인증 API", description = "이메일 인증 요청, 검증, 상태 조회 API")
+@Tag(name = "12. 이메일 인증 API", description = "이메일 인증 요청, 검증, 상태 조회 API")
 public interface EmailVerificationControllerDocs {
 
     @Operation(summary = "이메일 인증 메일 전송", description = "입력된 이메일 주소로 인증 메일을 전송합니다.")

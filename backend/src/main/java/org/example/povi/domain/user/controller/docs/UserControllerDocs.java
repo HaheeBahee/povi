@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "사용자 API", description = "사용자의 마이페이지 조회 및 프로필 수정 기능 제공")
+@Tag(name = "11. 사용자 API", description = "사용자의 마이페이지 조회 및 프로필 수정 기능 제공")
 public interface UserControllerDocs {
 
     @Operation(
