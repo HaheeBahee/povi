@@ -18,20 +18,19 @@ public class SwaggerConfig {
         Info info = new Info()
                 .title("POVI - 감정 공유 다이어리 서비스 API")
                 .description("""
-                        감정 기록과 공유를 중심으로 한 다이어리 서비스의 백엔드 API 문서입니다.
+                        감정 기록과 공유를 중심으로 한 다이어리 서비스의 백엔드 API입니다.
 
-                        ### 🔑 사용 방법 (1분 소요)
-                        1. `인증 API > 회원가입`으로 계정 생성 (이메일/비밀번호/닉네임, provider는 `LOCAL`)
-                        2. `인증 API > 로그인` 실행 후 응답의 `accessToken` 복사
-                        3. 우측 상단 **Authorize** 버튼 클릭 → 토큰 붙여넣기 → 모든 API 사용 가능
+                        🔑 사용 방법
+                        1. 회원가입
+                        2. 로그인
+                        3. Access Token을 Authorize에 입력
 
-                        ### ⭐ 표시는 제가 설계/구현을 담당한 파트입니다
-                        다이어리 도메인 전체 (게시글 CRUD, 공개범위 권한 정책, 댓글, 좋아요, 이미지 업로드, 감정 통계)
-
-                        **주요 구현 포인트**
-                        - 공개범위(PUBLIC / FRIEND / PRIVATE) × 팔로우 관계 기반 접근 제어 정책 분리 (`DiaryPostAccessPolicy`)
-                        - 내 다이어리 목록 조회 시 주간 감정 통계 집계 제공
-                        - 맞팔 여부에 따라 피드 노출 범위가 달라지는 친구/탐색 피드
+                        ⭐ 담당 영역
+                        - 다이어리 CRUD
+                        - 공개 범위 정책(PUBLIC / FRIEND / PRIVATE)
+                        - 댓글 / 좋아요
+                        - 이미지 업로드
+                        - 주간 감정 통계
                         """)
                 .version("1.0");
 
