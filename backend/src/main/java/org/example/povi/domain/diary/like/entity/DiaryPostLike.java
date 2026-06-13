@@ -8,7 +8,6 @@ import org.example.povi.domain.diary.post.entity.DiaryPost;
 import org.example.povi.domain.user.entity.User;
 import org.example.povi.global.entity.BaseEntity;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -26,13 +25,9 @@ public class DiaryPostLike extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "liked_at", nullable = false, updatable = false)
-    private LocalDateTime likedAt;
-
     private DiaryPostLike(DiaryPost post, User user) {
         this.post = post;
         this.user = user;
-        this.likedAt = LocalDateTime.now();
     }
 
     public static DiaryPostLike of(DiaryPost post, User user) {
