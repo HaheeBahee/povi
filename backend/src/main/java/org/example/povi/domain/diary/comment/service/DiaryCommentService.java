@@ -16,12 +16,13 @@ import org.example.povi.domain.diary.post.repository.DiaryPostRepository;
 import org.example.povi.domain.user.entity.User;
 import org.example.povi.domain.user.repository.UserRepository;
 import org.example.povi.global.dto.PagedResponse;
+import org.example.povi.global.exception.ex.AuthorizationException;
+import org.example.povi.global.exception.ex.ResourceNotFoundException;
+import org.example.povi.global.exception.ex.UnauthorizedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -45,10 +46,10 @@ public class DiaryCommentService {
         requireLogin(currentUserId);
 
         User commenter = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자가 존재하지 않습니다."));
 
         DiaryPost post = diaryPostRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글이 존재하지 않습니다."));
 
         assertReadable(currentUserId, post, "댓글을 작성할 권한이 없습니다.");
 
@@ -72,7 +73,7 @@ public class DiaryCommentService {
         requireLogin(currentUserId);
 
         DiaryPost post = diaryPostRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글이 존재하지 않습니다."));
 
         assertReadable(currentUserId, post, "이 게시글에 접근할 수 없습니다.");
 
@@ -94,16 +95,13 @@ public class DiaryCommentService {
         requireLogin(currentUserId);
 
         DiaryComment comment = diaryCommentRepository.findByIdAndPostId(commentId, postId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "해당 댓글이 존재하지 않거나 게시글과 매칭되지 않습니다."
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 댓글이 존재하지 않거나 게시글과 매칭되지 않습니다."));
 
         DiaryPost post = comment.getPost();
         assertReadable(currentUserId, post, "이 게시글에 접근할 수 없습니다.");
 
         if (!comment.getAuthor().getId().equals(currentUserId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 작성자만 수정할 수 있습니다.");
+            throw new AuthorizationException("댓글 작성자만 수정할 수 있습니다.");
         }
 
         DiaryCommentRequestMapper.updateEntity(comment, req);
@@ -123,10 +121,7 @@ public class DiaryCommentService {
         requireLogin(currentUserId);
 
         DiaryComment comment = diaryCommentRepository.findByIdAndPostId(commentId, postId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "해당 댓글이 존재하지 않거나 게시글과 매칭되지 않습니다."
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("해당 댓글이 존재하지 않거나 게시글과 매칭되지 않습니다."));
 
         DiaryPost post = comment.getPost();
         assertReadable(currentUserId, post, "이 게시글에 접근할 수 없습니다.");
@@ -134,7 +129,7 @@ public class DiaryCommentService {
         Long authorId = comment.getAuthor().getId();
         Long postAuthorId = post.getUser().getId();
         if (!currentUserId.equals(authorId) && !currentUserId.equals(postAuthorId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 작성자 또는 게시글 작성자만 삭제할 수 있습니다.");
+            throw new AuthorizationException("댓글 작성자 또는 게시글 작성자만 삭제할 수 있습니다.");
         }
 
         diaryCommentRepository.delete(comment);
@@ -144,14 +139,14 @@ public class DiaryCommentService {
     /** 로그인 필수 동작에서 userId null 방지 */
     private void requireLogin(Long userId) {
         if (userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new UnauthorizedException();
         }
     }
 
     /** 포스트 읽기 권한 검사: 본인/공개/친구(상호팔로우) */
     private void assertReadable(Long userId, DiaryPost post, String forbiddenMsg) {
         if (!postAccessPolicy.hasReadPermission(userId, post)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, forbiddenMsg);
+            throw new AuthorizationException(forbiddenMsg);
         }
     }
 

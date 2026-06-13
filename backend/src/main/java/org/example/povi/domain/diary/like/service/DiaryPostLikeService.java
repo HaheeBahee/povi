@@ -9,10 +9,11 @@ import org.example.povi.domain.diary.post.repository.DiaryPostRepository;
 import org.example.povi.domain.diary.post.policy.DiaryPostAccessPolicy;
 import org.example.povi.domain.user.entity.User;
 import org.example.povi.domain.user.repository.UserRepository;
-import org.springframework.http.HttpStatus;
+import org.example.povi.global.exception.ex.AuthorizationException;
+import org.example.povi.global.exception.ex.ResourceNotFoundException;
+import org.example.povi.global.exception.ex.UnauthorizedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
@@ -65,7 +66,7 @@ public class DiaryPostLikeService {
     @Transactional(readOnly = true)
     public long count(Long postId) {
         if (!diaryPostRepository.existsById(postId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다.");
+            throw new ResourceNotFoundException("게시글이 존재하지 않습니다.");
         }
         return countLikesByPostId(postId);
     }
@@ -77,23 +78,23 @@ public class DiaryPostLikeService {
 
     private void requireLogin(Long userId) {
         if (userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new UnauthorizedException();
         }
     }
 
     /** 존재/가시성 검증 후 게시글 반환 */
     private DiaryPost checkAccessOrThrow(Long postId, Long viewerId) {
         DiaryPost post = diaryPostRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("게시글이 존재하지 않습니다."));
         if (!canAccessPost(viewerId, post)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "이 게시글에 접근할 수 없습니다.");
+            throw new AuthorizationException("이 게시글에 접근할 수 없습니다.");
         }
         return post;
     }
 
     private User findUserOrThrow(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자가 존재하지 않습니다."));
     }
 
     private boolean canAccessPost(Long viewerId, DiaryPost post) {

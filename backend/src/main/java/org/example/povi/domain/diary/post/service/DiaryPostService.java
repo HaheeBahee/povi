@@ -17,13 +17,14 @@ import org.example.povi.domain.diary.post.repository.DiaryPostRepository;
 import org.example.povi.domain.user.entity.User;
 import org.example.povi.domain.user.follow.service.FollowService;
 import org.example.povi.domain.user.repository.UserRepository;
+import org.example.povi.global.exception.ex.AuthorizationException;
+import org.example.povi.global.exception.ex.ResourceNotFoundException;
+import org.example.povi.global.exception.ex.UnauthorizedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -50,15 +51,11 @@ public class DiaryPostService {
         requireLogin(currentUserId);
 
         User author = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 사용자입니다."));
 
-        try {
-            DiaryPost post = DiaryRequestMapper.fromCreateRequest(req, author); // 엔티티가 자체 정제/검증
-            DiaryPost saved = diaryPostRepository.save(post);
-            return DiaryPostCreateRes.from(saved);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        DiaryPost post = DiaryRequestMapper.fromCreateRequest(req, author);
+        DiaryPost saved = diaryPostRepository.save(post);
+        return DiaryPostCreateRes.from(saved);
     }
 
     /**
@@ -70,10 +67,10 @@ public class DiaryPostService {
         requireLogin(currentUserId);
 
         DiaryPost post = diaryPostRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 다이어리입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 다이어리입니다."));
 
         if (!postAccessPolicy.hasReadPermission(currentUserId, post)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "열람 권한이 없습니다.");
+            throw new AuthorizationException("열람 권한이 없습니다.");
         }
 
         boolean liked = diaryPostLikeRepository.existsByPostIdAndUserId(postId, currentUserId);
@@ -207,15 +204,11 @@ public class DiaryPostService {
 
         DiaryPost post = getOwnedDiaryPostOrThrow(postId, currentUserId);
 
-        try {
-            if (req.title() != null) post.renameTo(req.title());
-            if (req.content() != null) post.rewriteContent(req.content());
-            if (req.moodEmoji() != null) post.changeMood(req.moodEmoji());
-            if (req.visibility() != null) post.changeVisibility(req.visibility());
-            if (req.imageUrls() != null) post.replaceImages(req.imageUrls());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        if (req.title() != null) post.renameTo(req.title());
+        if (req.content() != null) post.rewriteContent(req.content());
+        if (req.moodEmoji() != null) post.changeMood(req.moodEmoji());
+        if (req.visibility() != null) post.changeVisibility(req.visibility());
+        if (req.imageUrls() != null) post.replaceImages(req.imageUrls());
 
         return DiaryPostUpdateRes.from(post);
     }
@@ -239,7 +232,7 @@ public class DiaryPostService {
      */
     private void requireLogin(Long userId) {
         if (userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new UnauthorizedException();
         }
     }
 
@@ -248,9 +241,9 @@ public class DiaryPostService {
      */
     private DiaryPost getOwnedDiaryPostOrThrow(Long postId, Long currentUserId) {
         DiaryPost post = diaryPostRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 다이어리입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 다이어리입니다."));
         if (!post.getUser().getId().equals(currentUserId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 다이어리만 접근할 수 있습니다.");
+            throw new AuthorizationException("본인의 다이어리만 접근할 수 있습니다.");
         }
         return post;
     }
