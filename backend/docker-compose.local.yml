@@ -1,0 +1,20 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: povi-mysql-local
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: povi
+    ports:
+      - "3308:3306"
+    volumes:
+      - povi-mysql-local-data:/var/lib/mysql
+
+  redis:
+    image: redis:7.0
+    container_name: povi-redis-local
+    ports:
+      - "6380:6379"
+
+volumes:
+  povi-mysql-local-data:
