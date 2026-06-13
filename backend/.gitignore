@@ -49,3 +49,5 @@ db_dev.trace.db
 
 .DS_Store
 .env
+.idea/
+.claude/
