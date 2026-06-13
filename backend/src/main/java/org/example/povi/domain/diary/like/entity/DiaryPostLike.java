@@ -43,12 +43,12 @@ public class DiaryPostLike extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DiaryPostLike that)) return false;
-        return Objects.equals(getPost(), that.getPost()) &&
-                Objects.equals(getUser(), that.getUser());
+        return Objects.equals(post.getId(), that.post.getId()) &&
+                Objects.equals(user.getId(), that.user.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPost(), getUser());
+        return Objects.hash(post.getId(), user.getId());
     }
 }

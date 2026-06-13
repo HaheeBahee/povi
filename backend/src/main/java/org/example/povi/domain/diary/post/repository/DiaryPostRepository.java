@@ -45,7 +45,6 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
     select p from DiaryPost p
     where p.user.id in :followingIds
       and p.visibility = :publicVis
-    order by p.createdAt desc
     """)
     Page<DiaryPost> findFriendFeedPublicOnlyPaged(
             @Param("followingIds") Collection<Long> followingIds,
@@ -57,7 +56,6 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
     select p from DiaryPost p
     where (p.user.id in :followingIds and p.visibility = :publicVis)
        or (p.user.id in :mutualIds    and p.visibility = :friendVis)
-    order by p.createdAt desc
     """)
     Page<DiaryPost> findFriendFeedWithMutualPaged(
             @Param("followingIds") Collection<Long> followingIds,
@@ -83,7 +81,6 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
                 (p.user.id in :mutualIds and p.visibility in :friendVisible)
              or (p.user.id not in :mutualIds and p.visibility = :publicVis)
           )
-        order by p.createdAt desc
         """)
     Page<DiaryPost> findExploreFeedWithMutualInPeriodPaged(
             @Param("viewerId") Long viewerId,
@@ -102,7 +99,6 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
           and p.createdAt >= :startAt
           and p.createdAt < :endAt
           and p.visibility = :publicVis
-        order by p.createdAt desc
         """)
     Page<DiaryPost> findExploreFeedPublicOnlyInPeriodPaged(
             @Param("viewerId") Long viewerId,

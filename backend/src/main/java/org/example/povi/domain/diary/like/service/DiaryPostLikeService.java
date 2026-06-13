@@ -29,7 +29,8 @@ public class DiaryPostLikeService {
      */
     @Transactional
     public DiaryPostLikeRes toggle(Long postId, Long userId) {
-         DiaryPost post = checkAccessOrThrow(postId, userId);
+        requireLogin(userId);
+        DiaryPost post = checkAccessOrThrow(postId, userId);
         User user = findUserOrThrow(userId);
 
         final boolean liked;
@@ -50,6 +51,7 @@ public class DiaryPostLikeService {
      */
     @Transactional(readOnly = true)
     public DiaryPostLikeRes me(Long postId, Long userId) {
+        requireLogin(userId);
         checkAccessOrThrow(postId, userId);
         boolean liked = diaryPostLikeRepository.existsByPostIdAndUserId(postId, userId);
         long count = countLikesByPostId(postId);
@@ -71,6 +73,12 @@ public class DiaryPostLikeService {
 
     private long countLikesByPostId(Long postId) {
         return diaryPostLikeRepository.countByPostId(postId);
+    }
+
+    private void requireLogin(Long userId) {
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
     }
 
     /** 존재/가시성 검증 후 게시글 반환 */

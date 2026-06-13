@@ -10,9 +10,9 @@ import java.util.List;
 
 @Schema(description = "다이어리 게시글 수정 요청 DTO")
 public record DiaryPostUpdateReq(
-        @Size(min = 2, max = 50)
+        @Size(min = 1, max = 50)
         String title,
-        @Size(min = 10, max = 3000)
+        @Size(min = 1, max = 3000)
         String content,
         MoodEmoji moodEmoji,
         Visibility visibility,
