@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.povi.domain.diary.comment.repository.DiaryCommentRepository;
 import org.example.povi.domain.diary.enums.Visibility;
 import org.example.povi.domain.diary.like.repository.DiaryPostLikeRepository;
+import org.example.povi.domain.diary.post.repository.DiaryImageRepository;
 import org.example.povi.domain.diary.post.dto.request.DiaryPostCreateReq;
 import org.example.povi.domain.diary.post.dto.request.DiaryPostUpdateReq;
 import org.example.povi.domain.diary.post.dto.response.*;
@@ -41,6 +42,7 @@ public class DiaryPostService {
     private final FollowService followService;
     private final DiaryPostLikeRepository diaryPostLikeRepository;
     private final DiaryCommentRepository diaryCommentRepository;
+    private final DiaryImageRepository diaryImageRepository;
     private final DiaryPostAccessPolicy postAccessPolicy;
 
     /**
@@ -183,13 +185,13 @@ public class DiaryPostService {
 
         if (page.isEmpty()) return Page.empty(pageable);
 
-        // 현재 페이지 집계
         List<Long> postIds = page.getContent().stream().map(DiaryPost::getId).toList();
         Map<Long, Long> commentCnt = DiaryQueryMapper.toCountMap(diaryPostRepository.countCommentsInPostIds(postIds));
         Map<Long, Long> likeCnt = DiaryQueryMapper.toCountMap(diaryPostLikeRepository.countByPostIds(postIds));
         Set<Long> likedSet = new HashSet<>(diaryPostLikeRepository.findPostIdsLikedByUser(postIds, currentUserId));
+        Map<Long, String> thumbnailUrls = DiaryQueryMapper.toFirstImageUrlMap(diaryImageRepository.findImageUrlsByPostIds(postIds));
 
-        List<DiaryPostCardRes> cards = DiaryCardAssembler.toCards(page.getContent(), likedSet, likeCnt, commentCnt);
+        List<DiaryPostCardRes> cards = DiaryCardAssembler.toCards(page.getContent(), likedSet, likeCnt, commentCnt, thumbnailUrls);
         return new PageImpl<>(cards, pageable, page.getTotalElements());
     }
 

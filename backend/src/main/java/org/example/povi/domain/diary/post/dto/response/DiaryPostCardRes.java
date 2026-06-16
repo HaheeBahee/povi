@@ -26,13 +26,17 @@ public record DiaryPostCardRes(
 
 ) {
     public static DiaryPostCardRes from(DiaryPost post, PostViewStats stats) {
+        return from(post, stats, DiaryPreviewMapper.firstImageUrl(post));
+    }
+
+    public static DiaryPostCardRes from(DiaryPost post, PostViewStats stats, String thumbnailUrl) {
         return new DiaryPostCardRes(
                 post.getId(),
                 post.getUser().getId(),
                 post.getUser().getNickname(),
                 post.getTitle(),
                 DiaryPreviewMapper.buildPreviewText(post.getContent(), 100),
-                DiaryPreviewMapper.firstImageUrl(post),
+                thumbnailUrl,
                 post.getMoodEmoji(),
                 post.getVisibility(),
                 post.getCreatedAt().toLocalDate(),

@@ -23,4 +23,14 @@ public final class DiaryQueryMapper {
         }
         return m;
     }
+
+    // postId → 첫 번째 이미지 URL (없는 게시글은 맵에 없음)
+    public static Map<Long, String> toFirstImageUrlMap(List<Object[]> rows) {
+        Map<Long, String> m = new HashMap<>();
+        if (rows == null) return m;
+        for (Object[] r : rows) {
+            m.putIfAbsent((Long) r[0], (String) r[1]);
+        }
+        return m;
+    }
 }

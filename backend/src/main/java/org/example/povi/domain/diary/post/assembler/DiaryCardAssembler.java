@@ -26,4 +26,20 @@ public final class DiaryCardAssembler {
                 ))
                 .toList();
     }
+
+    public static List<DiaryPostCardRes> toCards(
+            List<DiaryPost> posts,
+            Set<Long> likedSet,
+            Map<Long, Long> likeCnt,
+            Map<Long, Long> commentCnt,
+            Map<Long, String> thumbnailUrls
+    ) {
+        return posts.stream()
+                .map(p -> DiaryPostCardRes.from(
+                        p,
+                        PostViewStats.of(likedSet, likeCnt, commentCnt, p.getId()),
+                        thumbnailUrls.get(p.getId())
+                ))
+                .toList();
+    }
 }
