@@ -1,4 +1,4 @@
-# POVI
+# POVI Backend
 Java 21 · Spring Boot · MySQL
 
 공개 범위 정책을 기반으로 감정을 기록하고 친구와 공유할 수 있는 감정 공유 다이어리 서비스입니다.
