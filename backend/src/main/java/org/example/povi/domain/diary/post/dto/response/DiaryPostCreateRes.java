@@ -11,12 +11,25 @@ import java.util.List;
 
 @Schema(description = "다이어리 게시글 작성 응답 DTO")
 public record DiaryPostCreateRes(
+        @Schema(description = "생성된 다이어리 게시글 ID", example = "2")
         Long postId,
+
+        @Schema(description = "다이어리 제목", example = "오늘의 일기")
         String title,
+
+        @Schema(description = "다이어리 본문", example = "오늘은 날씨가 맑고 기분이 좋았다.")
         String content,
+
+        @Schema(description = "기분 이모지", example = "HAPPY")
         MoodEmoji moodEmoji,
+
+        @Schema(description = "공개 범위", example = "PUBLIC")
         Visibility visibility,
+
+        @Schema(description = "첨부 이미지 URL 목록", example = "[\"https://povi-bucket.s3.ap-northeast-2.amazonaws.com/diary/2026/06/sample.jpg\"]")
         List<String> imageUrls,
+
+        @Schema(description = "작성 시각", example = "2026-06-16T13:25:30")
         LocalDateTime createdAt
 ) {
     public static DiaryPostCreateRes from(DiaryPost post) {

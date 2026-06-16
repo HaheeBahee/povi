@@ -9,11 +9,22 @@ import java.util.Objects;
 
 @Schema(description = "다이어리 댓글 응답 DTO")
 public record DiaryCommentRes(
+        @Schema(description = "댓글 ID", example = "1")
         Long commentId,
+
+        @Schema(description = "댓글 작성자 ID", example = "1")
         Long authorId,
+
+        @Schema(description = "댓글 작성자 닉네임", example = "홍길동")
         String authorName,
+
+        @Schema(description = "댓글 내용", example = "수정된 댓글입니다.")
         String content,
+
+        @Schema(description = "댓글 작성 시각", example = "2026-06-16T13:27:56")
         LocalDateTime createdAt,
+
+        @Schema(description = "현재 사용자가 작성한 댓글인지 여부", example = "true")
         boolean isMine
 ) {
 

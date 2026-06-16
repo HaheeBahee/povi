@@ -9,11 +9,22 @@ import java.time.LocalDateTime;
 
 @Schema(description = "다이어리 댓글 작성 응답 DTO")
 public record DiaryCommentCreateRes(
+        @Schema(description = "생성된 댓글 ID", example = "1")
         Long commentId,
+
+        @Schema(description = "댓글이 작성된 다이어리 게시글 ID", example = "2")
         Long postId,
+
+        @Schema(description = "댓글 작성자 ID", example = "1")
         Long authorId,
+
+        @Schema(description = "댓글 작성자 닉네임", example = "홍길동")
         String authorName,
+
+        @Schema(description = "댓글 내용", example = "좋은 일기네요!")
         String content,
+
+        @Schema(description = "댓글 작성 시각", example = "2026-06-16T13:27:56")
         LocalDateTime createdAt
 ) {
     public static DiaryCommentCreateRes from(DiaryComment comment) {
