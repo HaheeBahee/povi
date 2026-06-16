@@ -41,8 +41,13 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
     //  - 맞팔 없음: 팔로잉 전체 PUBLIC만
     //  - 맞팔 있음: 팔로잉 전체 PUBLIC + 맞팔 FRIEND
     // =========================================================
-    @Query("""
-    select p from DiaryPost p
+    @Query(value = """
+    select p from DiaryPost p join fetch p.user
+    where p.user.id in :followingIds
+      and p.visibility = :publicVis
+    """,
+    countQuery = """
+    select count(p) from DiaryPost p
     where p.user.id in :followingIds
       and p.visibility = :publicVis
     """)
@@ -52,8 +57,13 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
             Pageable pageable
     );
 
-    @Query("""
-    select p from DiaryPost p
+    @Query(value = """
+    select p from DiaryPost p join fetch p.user
+    where (p.user.id in :followingIds and p.visibility = :publicVis)
+       or (p.user.id in :mutualIds    and p.visibility = :friendVis)
+    """,
+    countQuery = """
+    select count(p) from DiaryPost p
     where (p.user.id in :followingIds and p.visibility = :publicVis)
        or (p.user.id in :mutualIds    and p.visibility = :friendVis)
     """)
@@ -71,8 +81,19 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
     //  - 최근 7일 기간 필터
     //  - 맞팔: FRIEND + PUBLIC, 그 외: PUBLIC
     // =========================================================
-    @Query("""
+    @Query(value = """
         select p
+        from DiaryPost p join fetch p.user
+        where p.user.id <> :viewerId
+          and p.createdAt >= :startAt
+          and p.createdAt < :endAt
+          and (
+                (p.user.id in :mutualIds and p.visibility in :friendVisible)
+             or (p.user.id not in :mutualIds and p.visibility = :publicVis)
+          )
+        """,
+        countQuery = """
+        select count(p)
         from DiaryPost p
         where p.user.id <> :viewerId
           and p.createdAt >= :startAt
@@ -92,8 +113,16 @@ public interface DiaryPostRepository extends JpaRepository<DiaryPost, Long> {
             Pageable pageable
     );
 
-    @Query("""
+    @Query(value = """
         select p
+        from DiaryPost p join fetch p.user
+        where p.user.id <> :viewerId
+          and p.createdAt >= :startAt
+          and p.createdAt < :endAt
+          and p.visibility = :publicVis
+        """,
+        countQuery = """
+        select count(p)
         from DiaryPost p
         where p.user.id <> :viewerId
           and p.createdAt >= :startAt

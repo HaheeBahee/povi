@@ -120,9 +120,11 @@ public class DiaryPostService {
 
         // 집계 데이터 준비 (좋아요/댓글/내가 누른 글)
         List<Long> postIds = cardPage.getContent().stream().map(DiaryPost::getId).toList();
-        Map<Long, Long> likeCnt = postIds.isEmpty() ? Map.of() : DiaryQueryMapper.toCountMap(diaryPostLikeRepository.countByPostIds(postIds));
+        DiaryQueryMapper.LikeStats likeStats = postIds.isEmpty() ? DiaryQueryMapper.LikeStats.empty()
+                : DiaryQueryMapper.toLikeStats(diaryPostLikeRepository.findLikeStatsByPostIds(postIds, currentUserId));
+        Map<Long, Long> likeCnt = likeStats.likeCounts();
         Map<Long, Long> commentCnt = postIds.isEmpty() ? Map.of() : DiaryQueryMapper.toCountMap(diaryCommentRepository.countByPostIds(postIds));
-        Set<Long> likedSet = postIds.isEmpty() ? Set.of() : new HashSet<>(diaryPostLikeRepository.findPostIdsLikedByUser(postIds, currentUserId));
+        Set<Long> likedSet = likeStats.likedByUser();
 
         return MyDiaryAssembler.build(cardPage, thisWeekPosts, likedSet, likeCnt, commentCnt);
     }
@@ -151,11 +153,12 @@ public class DiaryPostService {
         // 현재 페이지 집계 (좋아요/댓글/내가 누른 글)
         List<Long> postIds = page.getContent().stream().map(DiaryPost::getId).toList();
         Map<Long, Long> commentCnt = DiaryQueryMapper.toCountMap(diaryPostRepository.countCommentsInPostIds(postIds));
-        Map<Long, Long> likeCnt = DiaryQueryMapper.toCountMap(diaryPostLikeRepository.countByPostIds(postIds));
-        Set<Long> likedSet = new HashSet<>(diaryPostLikeRepository.findPostIdsLikedByUser(postIds, currentUserId));
+        DiaryQueryMapper.LikeStats likeStats = DiaryQueryMapper.toLikeStats(
+                diaryPostLikeRepository.findLikeStatsByPostIds(postIds, currentUserId));
 
         // DTO 변환
-        List<DiaryPostCardRes> cards = DiaryCardAssembler.toCards(page.getContent(), likedSet, likeCnt, commentCnt);
+        List<DiaryPostCardRes> cards = DiaryCardAssembler.toCards(
+                page.getContent(), likeStats.likedByUser(), likeStats.likeCounts(), commentCnt);
         return new PageImpl<>(cards, pageable, page.getTotalElements());
     }
 
@@ -187,11 +190,12 @@ public class DiaryPostService {
 
         List<Long> postIds = page.getContent().stream().map(DiaryPost::getId).toList();
         Map<Long, Long> commentCnt = DiaryQueryMapper.toCountMap(diaryPostRepository.countCommentsInPostIds(postIds));
-        Map<Long, Long> likeCnt = DiaryQueryMapper.toCountMap(diaryPostLikeRepository.countByPostIds(postIds));
-        Set<Long> likedSet = new HashSet<>(diaryPostLikeRepository.findPostIdsLikedByUser(postIds, currentUserId));
+        DiaryQueryMapper.LikeStats likeStats = DiaryQueryMapper.toLikeStats(
+                diaryPostLikeRepository.findLikeStatsByPostIds(postIds, currentUserId));
         Map<Long, String> thumbnailUrls = DiaryQueryMapper.toFirstImageUrlMap(diaryImageRepository.findImageUrlsByPostIds(postIds));
 
-        List<DiaryPostCardRes> cards = DiaryCardAssembler.toCards(page.getContent(), likedSet, likeCnt, commentCnt, thumbnailUrls);
+        List<DiaryPostCardRes> cards = DiaryCardAssembler.toCards(
+                page.getContent(), likeStats.likedByUser(), likeStats.likeCounts(), commentCnt, thumbnailUrls);
         return new PageImpl<>(cards, pageable, page.getTotalElements());
     }
 
