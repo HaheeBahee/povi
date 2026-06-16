@@ -14,7 +14,7 @@ public record LoginRequestDto(
         @Schema(description = "사용자 이메일", example = "user@example.com")
         String email,
 
-        @Schema(description = "사용자 비밀번호", example = "p@ssW0rd123")
+        @Schema(description = "사용자 비밀번호", example = "test1234!")
         String password
 
 ) {}

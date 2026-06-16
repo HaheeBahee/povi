@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 
 @Schema(description = "다이어리 댓글 작성 요청 DTO")
 public record DiaryCommentCreateReq(
+        @Schema(example = "좋은 일기네요!")
         @NotBlank @Size(min = 1, max = 2000)
         String content
 ) {

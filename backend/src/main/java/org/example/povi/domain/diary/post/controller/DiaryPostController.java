@@ -1,12 +1,14 @@
 package org.example.povi.domain.diary.post.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.povi.domain.diary.post.dto.request.DiaryPostCreateReq;
@@ -58,7 +60,7 @@ public class DiaryPostController {
     })
     public ResponseEntity<DiaryPostUpdateRes> updateDiaryPost(
             @AuthenticationPrincipal(expression = "id") Long userId,
-            @PathVariable Long postId,
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId,
             @RequestBody @Valid DiaryPostUpdateReq updateReq
     ) {
         DiaryPostUpdateRes res = diaryPostService.updateDiaryPost(postId, updateReq, userId);
@@ -75,7 +77,7 @@ public class DiaryPostController {
     })
     public ResponseEntity<Void> deleteDiaryPost(
             @AuthenticationPrincipal(expression = "id") Long userId,
-            @PathVariable Long postId
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId
     ) {
         diaryPostService.deleteDiaryPost(postId, userId);
         return ResponseEntity.noContent().build();
@@ -92,7 +94,7 @@ public class DiaryPostController {
     })
     public ResponseEntity<DiaryDetailRes> getDiaryPostDetail(
             @AuthenticationPrincipal(expression = "id") Long userId,
-            @PathVariable Long postId
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId
     ) {
         DiaryDetailRes res = diaryPostService.getDiaryPostDetail(postId, userId);
         return ResponseEntity.ok(res);
@@ -108,7 +110,7 @@ public class DiaryPostController {
     public ResponseEntity<MyDiaryListRes> listMyDiaries(
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month,
-            @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @ParameterObject @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal(expression = "id") Long userId
     ) {
         MyDiaryListRes res = diaryPostService.getMyDiaryPostsWithMonthlyFilter(year, month, pageable, userId);
@@ -125,7 +127,7 @@ public class DiaryPostController {
     })
     public ResponseEntity<Page<DiaryPostCardRes>> listFriendDiaries(
             @AuthenticationPrincipal(expression = "id") Long userId,
-            @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            @ParameterObject @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<DiaryPostCardRes> res = diaryPostService.listFriendDiaries(userId, pageable);
         return ResponseEntity.ok(res);
@@ -141,7 +143,7 @@ public class DiaryPostController {
     })
     public ResponseEntity<Page<DiaryPostCardRes>> explore(
             @AuthenticationPrincipal(expression = "id") Long userId,
-            @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            @ParameterObject @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<DiaryPostCardRes> res = diaryPostService.listExploreFeed(userId, pageable);
         return ResponseEntity.ok(res);

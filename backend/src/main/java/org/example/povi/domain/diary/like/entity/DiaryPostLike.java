@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import org.example.povi.domain.diary.post.entity.DiaryPost;
 import org.example.povi.domain.user.entity.User;
 import org.example.povi.global.entity.BaseEntity;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -16,6 +18,10 @@ import java.util.Objects;
 @Table(name = "diary_post_likes")
 @AttributeOverride(name = "id", column = @Column(name = "post_like_id"))
 public class DiaryPostLike extends BaseEntity {
+
+    @CreationTimestamp
+    @Column(name = "liked_at", nullable = false, updatable = false)
+    private LocalDateTime likedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)

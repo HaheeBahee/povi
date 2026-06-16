@@ -2,6 +2,7 @@ package org.example.povi.domain.diary.image.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.povi.domain.diary.image.service.DiaryImageUploadService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +16,7 @@ public class DiaryImageUploadController implements DiaryImageUploadControllerDoc
 
     private final DiaryImageUploadService diaryImageUploadService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<String>> uploadDiaryImages(
             @RequestPart("images") List<MultipartFile> images
     ) {

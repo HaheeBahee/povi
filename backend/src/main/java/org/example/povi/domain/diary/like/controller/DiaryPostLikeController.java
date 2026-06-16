@@ -1,6 +1,7 @@
 package org.example.povi.domain.diary.like.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.povi.domain.diary.like.dto.DiaryPostLikeRes;
@@ -20,7 +21,7 @@ public class DiaryPostLikeController {
     @PostMapping("/toggle")
     @Operation(summary = "좋아요 토글", description = "이미 눌렀다면 취소, 아니면 추가합니다.")
     public ResponseEntity<DiaryPostLikeRes> toggleLike(
-            @PathVariable Long postId,
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId,
             @AuthenticationPrincipal(expression = "id") Long userId
     ) {
         DiaryPostLikeRes response = diaryPostLikeService.toggle(postId, userId);
@@ -30,7 +31,7 @@ public class DiaryPostLikeController {
     @GetMapping("/me")
     @Operation(summary = "좋아요 여부 조회")
     public ResponseEntity<DiaryPostLikeRes> isLiked(
-            @PathVariable Long postId,
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId,
             @AuthenticationPrincipal(expression = "id") Long userId
     ) {
         DiaryPostLikeRes response = diaryPostLikeService.me(postId, userId);
@@ -39,7 +40,9 @@ public class DiaryPostLikeController {
 
     @GetMapping("/count")
     @Operation(summary = "좋아요 수 조회")
-    public ResponseEntity<Long> countLikes(@PathVariable Long postId) {
+    public ResponseEntity<Long> countLikes(
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId
+    ) {
         long count = diaryPostLikeService.count(postId);
         return ResponseEntity.ok(count);
     }

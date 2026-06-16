@@ -1,6 +1,7 @@
 package org.example.povi.domain.diary.image.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,6 +37,7 @@ public interface DiaryImageUploadControllerDocs {
     })
     @DeleteMapping
     ResponseEntity<Void> deleteDiaryImage(
+            @Parameter(description = "삭제할 이미지 URL", example = "/uploads/diary/sample.jpg")
             @RequestParam("imageUrl") String imageUrl
     );
 }

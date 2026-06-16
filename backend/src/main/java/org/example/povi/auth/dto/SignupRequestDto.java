@@ -14,16 +14,16 @@ public record SignupRequestDto(
         @Schema(description = "사용자 이메일", example = "user@example.com")
         String email,
 
-        @Schema(description = "사용자 비밀번호", example = "secureP@ssw0rd")
+        @Schema(description = "사용자 비밀번호 (local 회원가입 시 필수)", example = "test1234!")
         String password,
 
         @Schema(description = "사용자 닉네임", example = "홍길동")
         String nickname,
 
-        @Schema(description = "OAuth 제공자 (ex: google, kakao)", example = "google")
+        @Schema(description = "인증 제공자 (local / google / kakao)", example = "local")
         String provider,
 
-        @Schema(description = "OAuth 제공자 고유 ID", example = "1037246634527")
+        @Schema(description = "OAuth 제공자 고유 ID (OAuth 회원가입 시에만 입력)", example = "")
         String providerId
 
 ) {}

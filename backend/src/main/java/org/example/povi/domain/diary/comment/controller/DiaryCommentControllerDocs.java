@@ -1,6 +1,7 @@
 package org.example.povi.domain.diary.comment.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,7 @@ import org.example.povi.domain.diary.comment.dto.response.DiaryCommentCreateRes;
 import org.example.povi.domain.diary.comment.dto.response.DiaryCommentRes;
 import org.example.povi.domain.diary.comment.dto.response.DiaryCommentUpdateRes;
 import org.example.povi.global.dto.PagedResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,9 +27,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/diary-posts/{postId}/comments")
 public interface DiaryCommentControllerDocs {
 
-
     @PostMapping
-    @Operation(summary = "일기 댓글 생성")
+    @Operation(summary = "댓글 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "댓글 생성 성공", content =
             @Content(schema = @Schema(implementation = DiaryCommentCreateRes.class))),
@@ -36,13 +37,13 @@ public interface DiaryCommentControllerDocs {
             @ApiResponse(responseCode = "404", description = "일기 게시글을 찾을 수 없음")
     })
     ResponseEntity<DiaryCommentCreateRes> createDiaryComment(
-            @PathVariable Long postId,
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId,
             @RequestBody @Valid DiaryCommentCreateReq createReq,
             @AuthenticationPrincipal(expression = "id") Long userId
     );
 
     @GetMapping
-    @Operation(summary = "일기 댓글 조회")
+    @Operation(summary = "댓글 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "댓글 조회 성공", content =
             @Content(schema = @Schema(implementation = PagedResponse.class))),
@@ -50,13 +51,13 @@ public interface DiaryCommentControllerDocs {
             @ApiResponse(responseCode = "404", description = "일기 게시글을 찾을 수 없음")
     })
     ResponseEntity<PagedResponse<DiaryCommentRes>> getComments(
-            @PathVariable Long postId,
-            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId,
+            @ParameterObject @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
             @AuthenticationPrincipal(expression = "id") Long userId
     );
 
     @PatchMapping("/{commentId}")
-    @Operation(summary = "일기 댓글 수정")
+    @Operation(summary = "댓글 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "댓글 수정 성공", content =
             @Content(schema = @Schema(implementation = DiaryCommentUpdateRes.class))),
@@ -66,14 +67,14 @@ public interface DiaryCommentControllerDocs {
             @ApiResponse(responseCode = "404", description = "일기/댓글을 찾을 수 없음")
     })
     ResponseEntity<DiaryCommentUpdateRes> updateDiaryComment(
-            @PathVariable Long postId,
-            @PathVariable Long commentId,
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId,
+            @Parameter(description = "댓글 ID", example = "1") @PathVariable Long commentId,
             @RequestBody @Valid DiaryCommentUpdateReq updateReq,
             @AuthenticationPrincipal(expression = "id") Long userId
     );
 
     @DeleteMapping("/{commentId}")
-    @Operation(summary = "일기 댓글 삭제")
+    @Operation(summary = "댓글 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "댓글 삭제 성공"),
             @ApiResponse(responseCode = "401", description = "인증 실패"),
@@ -81,8 +82,8 @@ public interface DiaryCommentControllerDocs {
             @ApiResponse(responseCode = "404", description = "일기/댓글을 찾을 수 없음")
     })
     ResponseEntity<Void> deleteDiaryComment(
-            @PathVariable Long postId,
-            @PathVariable Long commentId,
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long postId,
+            @Parameter(description = "댓글 ID", example = "1") @PathVariable Long commentId,
             @AuthenticationPrincipal(expression = "id") Long userId
     );
 }
