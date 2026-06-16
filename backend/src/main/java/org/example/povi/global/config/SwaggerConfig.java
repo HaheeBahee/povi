@@ -4,7 +4,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,6 +14,9 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${app.swagger-server-url:}")
+    private String swaggerServerUrl;
 
     @Bean
     public OpenAPI openAPI() {
@@ -61,10 +66,16 @@ public class SwaggerConfig {
                 new Tag().name("13. 날씨 API").description("좌표 기반 현재 날씨 조회")
         );
 
-        return new OpenAPI()
+        OpenAPI openAPI = new OpenAPI()
                 .info(info)
                 .tags(tags)
                 .addSecurityItem(securityRequirement)
                 .schemaRequirement("BearerAuth", securityScheme);
+
+        if (swaggerServerUrl != null && !swaggerServerUrl.isBlank()) {
+            openAPI.servers(List.of(new Server().url(swaggerServerUrl)));
+        }
+
+        return openAPI;
     }
 }

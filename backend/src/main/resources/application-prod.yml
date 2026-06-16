@@ -48,6 +48,7 @@ app:
     redirect-uri: ${OAUTH2_REDIRECT_URI:http://localhost:3000/oauth2/redirect}
   mail:
     verification-link: "http://${SERVER_IP:localhost}:8081/api/auth/verify-email?token="
+  swagger-server-url: http://13.124.129.7:81
 
 file:
   upload:
@@ -61,3 +62,4 @@ file:
 logging:
   level:
     org.hibernate.SQL: info
+
